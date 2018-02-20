@@ -1,0 +1,27 @@
+weather-service:
+  container_name: weather-service
+  build: ./services/weather/
+  volumes:
+    - './services/weather:/usr/src/app'
+    - './services/weather/package.json:/usr/src/package.json'
+  ports:
+    - '3000:3000' # expose ports - HOST:CONTAINER
+  environment:
+    - NODE_ENV=${NODE_ENV}
+    - TOKEN_SECRET=changeme
+
+web-service:
+  container_name: web-service
+  build: ./services/web/app
+  volumes:
+    - './services/web:/usr/src/app'
+    - '/usr/src/app/node_modules'
+  ports:
+    - '3007:3006' # expose ports - HOST:CONTAINER
+  environment:
+    - NODE_ENV=${NODE_ENV}
+  # depends_on:
+  #   weather-service:
+  #     condition: service_started
+  links:
+    - weather-service
